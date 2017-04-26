@@ -5,12 +5,26 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 });
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function click(e) {
-	chrome.tabs.executeScript(null,
-		{file:"JQuery1.9.1.js"});
-	if (e.target.id == 'changeUrl'){	
-		chrome.tabs.executeScript(null,
-			{file:"replaceUrl.js"});
+	if (e.target.id == 'reload'){	
+		var fourmTabs = new Array();
+		var a = getRandomInt(1,9);
+		chrome.tabs.query({lastFocusedWindow: true}, function (tabs) {
+			for (var i = 0; i < tabs.length; i++) {
+				fourmTabs[i] = tabs[i];
+			}
+			for (var i = 0; i < fourmTabs.length; i++) {
+				if (fourmTabs[i] != null){
+					var newUrl = fourmTabs[i].url;
+					console.log(newUrl);
+					newUrl = newUrl.replace("www","www"+a);
+					chrome.tabs.update(fourmTabs[i].id, {url: newUrl});
+				}
+			}
+		});
 	} 
-	window.close();
 }
